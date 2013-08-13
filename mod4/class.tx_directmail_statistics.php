@@ -718,7 +718,7 @@ class tx_directmail_statistics extends t3lib_SCbase {
 				// a link to this host?
 			$uParts = @parse_url($url);
 			$urlstr = $this->getUrlStr($uParts);
-			$label = $HTMLlinks[$id]['label'].' (' . ($urlstr ? t3lib_div::fixed_lgd_cs($urlstr, 60) : '/') . ')';
+			$label = $this->getLinkLabel($url, $urlstr);
 
 			$img = '<a href="'.$urlstr.'" target="_blank"><img '.t3lib_iconWorks::skinImg($GLOBALS["BACK_PATH"], 'gfx/zoom.gif', 'width="12" height="12"').' title="'.htmlspecialchars($label).'" /></a>';
 
@@ -1277,6 +1277,62 @@ class tx_directmail_statistics extends t3lib_SCbase {
 		return $theOutput;
 	}
 
+
+	/*
+	 * This method returns the label for a specified URL.
+	 * If the page is local and contains a fragment it returns the label of the content element linked to.
+	 * In any other case it simply fetches the page and extracts the <title> tag content as label
+	 * @notice This method was added as part of the ages_plaintextmail extension (kraftb)
+	 *
+	 * @param string	$url:The statistics click-URL for which to return a label
+	 * @param string	$urlStr: A processed variant of the url string. This could get appended to the label???
+	 * @param bool		$forceFetch: When this parameter is set to true the "fetch and extract <title> tag" method will get used
+	 * @return string	The label for the passed $url parameter
+	 */
+	function getLinkLabel($url, $urlStr, $forceFetch = false) {
+		$pathSite = $this->getBaseURL();
+		$label = '';
+
+		$urlParts = parse_url($url);
+		if (!$forceFetch && (substr($url, 0, strlen($pathSite)) === $pathSite)) {
+			if ($urlParts['fragment'] && (substr($urlParts['fragment'], 0, 1) == 'c')) {
+				// linking directly to a content
+				$elementUid = intval(substr($urlParts['fragment'], 1));
+				$row = t3lib_BEfunc::getRecord('tt_content', $elementUid);
+				if ($row) {
+					$label = t3lib_BEfunc::getRecordTitle('tt_content', $row, false, true);
+				}
+			} else {
+				$label = $this->getLinkLabel($url, $urlStr, true);
+			}
+		} else {
+			if (empty($urlParts['host']) && (substr($url, 0, strlen($pathSite)) !== $pathSite)) {
+				// it's internal
+				$url = $pathSite.$url;
+			}
+
+			$content = t3lib_div::getURL($url);
+
+			if (preg_match('/\<\s*title\s*\>(.*)\<\s*\/\s*title\s*\>/i', $content, $matches)) {
+				// get the page title
+				$label = t3lib_div::fixed_lgd_cs(trim($matches[1]),50);
+			} else {
+				// file?
+				$file = t3lib_div::split_fileref($url);
+				$label = $file['file'];
+			}
+		}
+		if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXT']['directmail']['getLinkLabel'])) {
+			foreach($GLOBALS['TYPO3_CONF_VARS']['EXT']['directmail']['getLinkLabel'] as $_funcRef) {
+				$_params = array('pObj' => &$this, 'url' => $url, 'urlStr' => $urlStr, 'label' => $label);
+				$label = t3lib_div::callUserFunction($_funcRef, $_params, $this);
+			}
+		}
+
+		return $label;
+	}
+
+
 	/**
 	 * generates a string for the URL
 	 *
@@ -1284,9 +1340,7 @@ class tx_directmail_statistics extends t3lib_SCbase {
 	 * @return	string	the URL string
 	 */
 	function getUrlStr($uParts) {
-		$urlstr = '';
-
-		$baseURL = t3lib_div::getIndpEnv("TYPO3_SITE_URL");
+		$baseURL = $this->getBaseURL();
 
 		if (is_array($uParts) && t3lib_div::getIndpEnv('TYPO3_HOST_ONLY') == $uParts['host']) {
 			$m = array();
@@ -1310,13 +1364,34 @@ class tx_directmail_statistics extends t3lib_SCbase {
 				$query = preg_replace('/(?:^|&)id=([0-9a-z_]+)/', '', $uParts['query']);
 				$urlstr = t3lib_div::fixed_lgd_cs($temp_page['title'], 50) . t3lib_div::fixed_lgd_cs(($query ? ' / ' . $query : ''), 20);
 			} else {
-				$urlstr = $baseURL.substr($uParts['path'],1) . ($uParts['query'] ? '?' . $uParts['query'] : '');
+				$urlstr = $baseURL.substr($uParts['path'],1);
+				$urlstr .= $uParts['query'] ? '?' . $uParts['query'] : '';
+				$urlstr .= $uParts['fragment'] ? '#' . $uParts['fragment'] : '';
 			}
 		} else {
-			$urlstr =  ($uParts['host'] ? $uParts['scheme'].'://'.$uParts['host'] : $baseURL).$uParts['path']. ($uParts['query'] ? '?' . $uParts['query'] : '');
+			$urlstr =  ($uParts['host'] ? $uParts['scheme'].'://'.$uParts['host'] : $baseURL) . $uParts['path'];
+			$urlstr .= $uParts['query'] ? '?' . $uParts['query'] : '';
+			$urlstr .= $uParts['fragment'] ? '#' . $uParts['fragment'] : '';
 		}
 
 		return $urlstr;
+	}
+
+	/**
+	 * get baseURL of the FE
+	 * force http if UseHttpToFetch is set
+	 *
+	 * @return string the baseURL
+	 */
+	function getBaseURL() {
+		$baseURL = t3lib_div::getIndpEnv("TYPO3_SITE_URL");
+
+		# if fetching the newsletter using http, set the url to http here
+		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['UseHttpToFetch'] == 1) {
+			$baseURL = str_replace('https','http', $baseURL);
+		}
+
+		return $baseURL;
 	}
 
 	/**

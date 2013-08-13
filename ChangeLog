@@ -13,6 +13,10 @@
 2013-06-24  fa1bb9b  #49378     [FEATURE] Trim items of address list readed from csv (Frans Saris)
 2013-06-16  d1ad346  #48515     [BUGFIX] Trim email addresses when fetching from database (Ivan Kartolo)
 2013-06-10  5988d55  #46452     [BUGFIX] Statistics module uses unnecessary t3lib_div::inList (Bernhard Kraft)
+
+2013-06-09 Bernhard Kraft <kraft@webconsulting.at>
+	* Feature #46453: Better link labels in the statistics module
+
 2013-06-04 Ivan Kartolo <ivan@kartolo.de>
 	* Feature #48723: added hide field in importer mapping
 
