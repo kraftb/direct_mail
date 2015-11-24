@@ -258,11 +258,8 @@ class MailerEngine extends \TYPO3\CMS\Backend\Module\BaseScriptClass {
 		$cronInterval = $GLOBALS["TYPO3_CONF_VARS"]['EXTCONF']['direct_mail']['cronInt'] * 60;
 		$lastCronjobShouldBeNewThan = (time() - $cronInterval);
 
-		$filename = PATH_site . 'typo3temp/tx_directmail_dmailer_log.txt';
-		if (file_exists($filename)) {
-			$logContent = file_get_contents($filename);
-			$lastExecutionTime = substr($logContent, 0, 10);
-		}
+		$registry = GeneralUtility::makeInstance('TYPO3\CMS\Core\Registry');
+		$lastExecutionTime = (int)$registry->get('DirectMailTeam\DirectMail', 'sending_start');
 
 		/*
 		 * status:
@@ -285,10 +282,6 @@ class MailerEngine extends \TYPO3\CMS\Backend\Module\BaseScriptClass {
 				$mailerStatus = -1;
 			}
 			// cron is idle or no cron
-		} elseif (strpos($logContent, 'error')) {
-				// error in log file
-			$mailerStatus = -1;
-			$error = substr($logContent, strpos($logContent, 'error') + 7);
 		} else if (!strlen($logContent) || ($lastExecutionTime < $lastCronjobShouldBeNewThan)) {
 				// cron is not set or not running
 			$mailerStatus = 0;

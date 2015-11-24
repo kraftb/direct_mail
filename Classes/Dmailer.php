@@ -841,7 +841,8 @@ class Dmailer {
 		if (!$this->nonCron) {
 			if (TYPO3_DLOG) GeneralUtility::devLog('Starting directmail cronjob', 'direct_mail');
 			//write this temp file for checking the engine in the status module
-			$this->dmailer_log('w','starting directmail cronjob');
+			$registry = GeneralUtility::makeInstance('TYPO3\CMS\Core\Registry');
+			$registry->set('DirectMailTeam\DirectMail', 'sending_start', time());
 		}
 
 	}
@@ -1085,26 +1086,6 @@ class Dmailer {
 				$val['subst_str'],
 				$val['quotes'] . $substVal . $val['quotes'],
 				$this->theParts['html']['content']);
-		}
-	}
-
-	/**
-	* write to log file and send a notification email to admin if no records in sys_dmail_maillog table can be made
-	*
-	* @param	string		$writeMode: mode to open a file
-	* @param	string		$logMsg: log message
-	* @return	void		...
-	*/
-	function dmailer_log($writeMode,$logMsg){
-		global $TYPO3_CONF_VARS;
-
-		$content = time().' => '.$logMsg.LF;
-		$logfilePath = 'typo3temp/tx_directmail_dmailer_log.txt';
-
-		$fp = fopen(PATH_site.$logfilePath,$writeMode);
-		if ($fp) {
-			fwrite($fp,$content);
-			fclose($fp);
 		}
 	}
 
