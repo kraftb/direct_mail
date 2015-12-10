@@ -297,6 +297,7 @@ class Dmailer {
 			if ($this->flag_html && ($recipRow['module_sys_dmail_html'] || $tableNameChar == 'P')) {
 				$tempContent_HTML = $this->dmailer_getBoundaryParts($this->dmailer['boundaryParts_html'], $recipRow['sys_dmail_categories_list']);
 				if ($this->mailHasContent) {
+				$tempContent_HTML = $this->dmailer_getBoundaryParts($this->dmailer['boundaryParts_html'], $recipRow['sys_dmail_categories_list']);
 					$tempContent_HTML = $this->replaceMailMarkers($tempContent_HTML, $recipRow, $additionalMarkers);
 					$this->theParts['html']['content'] = $this->encodeMsg($tempContent_HTML);
 					$returnCode|=1;

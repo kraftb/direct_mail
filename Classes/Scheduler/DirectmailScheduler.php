@@ -24,7 +24,7 @@ namespace DirectMailTeam\DirectMail\Scheduler;
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-use TYPO3\CMS\Core\Utility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
 * Class tx_directmail_scheduler
@@ -42,13 +42,22 @@ class DirectmailScheduler extends \TYPO3\CMS\Scheduler\Task\AbstractTask {
 	 * @return	bool
 	 */
 	function execute() {
-		/** @var $htmlmail Dmailer */
-		$htmlmail = Utility\GeneralUtility::makeInstance('DirectMailTeam\\DirectMail\\Dmailer');
-		$htmlmail->start();
-		$htmlmail->runcron();
+		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['useSendingQueue']) {
+			$objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+
+			// Get instance of massMailingService
+			$massMailingService = $objectManager->get('DirectMailTeam\DirectMail\Service\MassMailingService');
+
+			// Initialize and process mail jobs (sys_dmail)
+			$massMailingService->initialize();
+			$massMailingService->handleJobs();
+		} else {
+			/** @var $htmlmail Dmailer */
+			$htmlmail = GeneralUtility::makeInstance('DirectMailTeam\\DirectMail\\Dmailer');
+			$htmlmail->start();
+			$htmlmail->runcron();
+		}
 		return TRUE;
 	}
 
 }
-
-?>

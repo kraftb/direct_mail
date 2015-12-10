@@ -452,6 +452,7 @@ If you do not specify a username and password and the newsletter pages happen to
 			<label index="dmailer_processed">processed...</label>
 			<label index="dmailer_sending">Sending</label>
 			<label index="dmailer_sending_to_table">mails using records from table</label>
+			<label index="dmailer_sending_to_recipients">Sending mails to %1$s recipients</label>
 			<label index="dmailer_sys_dmail_record">sys_dmail record</label>
 			<label index="header_conf">Configuration</label>
 			<label index="header_directmail">Direct Mail</label>

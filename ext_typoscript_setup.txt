@@ -1,0 +1,76 @@
+
+config.tx_extbase {
+	persistence {
+		classes {
+
+			DirectMailTeam\DirectMail\Domain\Model\Address < .TYPO3\TtAddress\Domain\Model\Address
+
+			DirectMailTeam\DirectMail\Domain\Model\FrontendUser < .TYPO3\CMS\Extbase\Domain\Model\FrontendUser
+
+			DirectMailTeam\DirectMail\Domain\Model\MailJob {
+				mapping {
+					tableName = sys_dmail
+					columns {
+						tstamp.mapOnProperty = modificationDate
+						issent.mapOnProperty = isSent
+						query_info.mapOnPropery = queryInfo
+					}
+				}
+			}
+
+			DirectMailTeam\DirectMail\Domain\Model\Page {
+				mapping {
+					tableName = pages
+					columns {
+						uid {
+							mapOnProperty = children
+							config {
+								foreign_table = pages
+								foreign_sortby = sorting
+								foreign_field = pid
+							}
+						}
+					}
+				}
+			}
+
+			DirectMailTeam\DirectMail\Domain\Model\RecipientGroup {
+				mapping {
+					tableName = sys_dmail_group
+					columns {
+						tstamp.mapOnProperty = modificationDate
+						whichtables.mapOnProperty = recipientTables
+						list.mapOnProperty = plainRecipientList
+						csv.mapOnProperty = plainRecipientListFormat
+						recursive.mapOnProperty = pagesRecursive
+					}
+				}
+			}
+
+			DirectMailTeam\DirectMail\Domain\Model\Category {
+				mapping {
+					tableName = sys_dmail_category
+					columns {
+						tstamp.mapOnProperty = modificationDate
+						crdate.mapOnProperty = creationDate
+						category.mapOnProperty = name
+					}
+				}
+			}
+
+			DirectMailTeam\DirectMail\Domain\Model\SendQueue {
+				mapping {
+					columns {
+						tstamp.mapOnProperty = modificationDate
+						crdate.mapOnProperty = creationDate
+					}
+				}
+			}
+
+		}
+	}
+	features {
+		rewrittenPropertyMapper = 1
+	}
+}
+

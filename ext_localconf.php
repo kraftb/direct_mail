@@ -49,6 +49,16 @@ $TYPO3_CONF_VARS['EXTCONF'][$_EXTKEY]['cronInt'] = $_EXTCONF['cronInt'];
 $TYPO3_CONF_VARS['EXTCONF'][$_EXTKEY]['UseHttpToFetch'] = $_EXTCONF['UseHttpToFetch'];
 
 /**
+ * Use sending queue
+ */
+$TYPO3_CONF_VARS['EXTCONF'][$_EXTKEY]['useSendingQueue'] = $_EXTCONF['useSendingQueue'];
+
+/**
+ * Enqueue recipients during the first task run instead of when scheduling the mail.
+ */
+$TYPO3_CONF_VARS['EXTCONF'][$_EXTKEY]['enqueueByTask'] = $_EXTCONF['enqueueByTask'];
+
+/**
  * Enable the use of News plain text rendering hook:
  */
 if ($_EXTCONF['enablePlainTextNews']) {

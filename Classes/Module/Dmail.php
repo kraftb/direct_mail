@@ -827,6 +827,9 @@ class Dmail extends \TYPO3\CMS\Backend\Module\BaseScriptClass {
 		$opt = array();
 		while($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 
+			// @todo: Implement a switch here to retrieve number of recipients using
+			// the RecipientQueueService class
+
 			$result = $this->cmd_compileMailGroup(array($row['uid']));
 			$count = 0;
 			$idLists = $result['queryInfo']['id_lists'];
@@ -972,6 +975,12 @@ class Dmail extends \TYPO3\CMS\Backend\Module\BaseScriptClass {
 				$GLOBALS['TYPO3_DB']->sql_free_result($res);
 
 			} elseif (is_array(GeneralUtility::_GP('sys_dmail_group_uid'))) {
+
+				// @todo: Implement a switch here which uses the new domain models
+				// to send test mails. Currently only the final mass mails are using the
+				// new send-queue code. When templating/sending of mail has been refactored
+				// the test mails can also get sent that way.
+
 				// personalized to group
 				$result = $this->cmd_compileMailGroup(GeneralUtility::_GP('sys_dmail_group_uid'));
 
@@ -995,10 +1004,22 @@ class Dmail extends \TYPO3\CMS\Backend\Module\BaseScriptClass {
 				// prepare the email for sending with the mailqueue
 			$recipientGroups = GeneralUtility::_GP('mailgroup_uid');
 			if (GeneralUtility::_GP('mailingMode_mailGroup') && $this->sys_dmail_uid && is_array($recipientGroups)) {
-					// Update the record:
-				$result = $this->cmd_compileMailGroup($recipientGroups);
-				$queryInfo = $result['queryInfo'];
+				$queryInfo = array();
 
+				if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['useSendingQueue']) {
+					// Use the new sending queue instead of an array with serialized recipient UIDs
+					// @todo: Always use this branch of the "if" when the new code becomes stable.
+					$objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+					$recipientQueueService = $objectManager->get('DirectMailTeam\DirectMail\Service\RecipientQueueService');
+					$queryInfo['useSendingQueue'] = TRUE;
+					$queryInfo['enqueuedRecipients'] = FALSE;
+					$queryInfo['recipientGroups'] = $recipientGroups;
+				} else {
+					$result = $this->cmd_compileMailGroup($recipientGroups);
+					$queryInfo = $result['queryInfo'];
+				}
+
+					// Update the record:
 				$distributionTime = intval(strtotime(GeneralUtility::_GP('send_mail_datetime')));
 				if ($distributionTime < time()) {
 					$distributionTime = time();
@@ -1034,6 +1055,10 @@ class Dmail extends \TYPO3\CMS\Backend\Module\BaseScriptClass {
 					'uid=' . intval($this->sys_dmail_uid),
 					$updateFields
 				);
+				if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['useSendingQueue'] && !$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['enqueueByTask'] && !GeneralUtility::_GP('savedraft')) {
+					// We can only enqueue recipients after the sys_dmail record has been updated.
+					$recipientQueueService->enqueueRecipients($recipientGroups, $this->sys_dmail_uid);
+				}
 
 				/** @var $flashMessage FlashMessage */
 				$flashMessage = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Messaging\\FlashMessage',

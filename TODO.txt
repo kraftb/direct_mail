@@ -1,0 +1,13 @@
+
+Stellen suchen an denen der Cron-Job aufgerufen wird (runcron) und dort aufgrund der Bedingung
+(useSendingQueue) auf die neue Service Klasse umschalten.
+
+Wenn eine direct_mail an sehr viele Empfänger gesendet wird (z.B. 1.000.000 Empfänger) dann
+könnte es nach ca. 2.000.000.000 / 1.000.000 Mails, also nach 2.000 Mails passieren, dass
+die UID der sending queue einen Überlauf hat. Soll dieser Fall berücksichtigt werden?
+
+
+/home/kraftb/smb/oiat/watchlist/typo3_src-6.2.14/typo3/sysext/extbase/Classes/Persistence/Generic/Mapper/DataMapper.php.PATCHED
+
+
+

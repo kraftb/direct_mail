@@ -150,6 +150,16 @@
             <label index="sys_dmail_group.csv.I.0">Separate emails by space/comma/linebreak</label>
             <label index="sys_dmail_group.csv.I.1">CSV [name],[email]</label>
             <label index="sys_dmail_group.select_categories">Must subscribe to one of the categories:</label>
+            <label index="tx_directmail_domain_model_sendqueue">Send queue</label>
+            <label index="tx_directmail_domain_model_sendqueue.crdate">Creation date</label>
+            <label index="tx_directmail_domain_model_sendqueue.mail_job">Direct mail job</label>
+            <label index="tx_directmail_domain_model_sendqueue.recipient_uid">Recipient record UID</label>
+            <label index="tx_directmail_domain_model_sendqueue.recipient_table">Recipient record table</label>
+            <label index="tx_directmail_domain_model_sendqueue.recipient_data">Plain recipient data</label>
+            <label index="tx_directmail_domain_model_sendqueue.send_status">Send status</label>
+            <label index="tx_directmail_domain_model_sendqueue.send_status.I.0">Queued</label>
+            <label index="tx_directmail_domain_model_sendqueue.send_status.I.1">Processing</label>
+            <label index="tx_directmail_domain_model_sendqueue.send_status.I.2">Sent</label>
         </languageKey>
         <languageKey index="dk" type="array">
             <label index="sys_dmail">Direct mail</label>
@@ -270,6 +280,16 @@
             <label index="sys_dmail_group.select_categories.I.7">Kat 7</label>
             <label index="sys_dmail_group.select_categories.I.8">Kat 8</label>
             <label index="sys_dmail_group.select_categories.I.9">Kat 9</label>
+            <label index="tx_directmail_domain_model_sendqueue">Versandwarteschlange</label>
+            <label index="tx_directmail_domain_model_sendqueue.crdate">Erstellungsdatum</label>
+            <label index="tx_directmail_domain_model_sendqueue.mail_job">Direct-Mail</label>
+            <label index="tx_directmail_domain_model_sendqueue.recipient_uid">Empfängerdatensatz UID</label>
+            <label index="tx_directmail_domain_model_sendqueue.recipient_table">Empfängerdatensatz Tabelle</label>
+            <label index="tx_directmail_domain_model_sendqueue.recipient_data">Rohe Empfängerdaten</label>
+            <label index="tx_directmail_domain_model_sendqueue.send_status">Versandstatus</label>
+            <label index="tx_directmail_domain_model_sendqueue.send_status.I.0">In Warteschlange</label>
+            <label index="tx_directmail_domain_model_sendqueue.send_status.I.1">Wird gerade versendet</label>
+            <label index="tx_directmail_domain_model_sendqueue.send_status.I.2">Wurde versendet</label>
         </languageKey>
         <languageKey index="no" type="array">
             <label index="sys_dmail">Direct mail</label>
