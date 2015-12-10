@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<description>Labels for the direct mail service classes</description>
+		<type>module</type>
+		<csh_table></csh_table>
+		<fileId>EXT:direct_mail/Resouces/Private/Language//locallang_service.xml</fileId>
+		<labelContext type="array">
+			<label index="RecipientQueueService.start_enqueueStart to enqueue recipients at %s."></label>
+			<label index="RecipientQueueService.finish_enqueueStart to enqueue recipients at %s."></label>
+		</labelContext>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="RecipientQueueService.start_enqueue">Start to enqueue recipients at %1$s.</label>
+			<label index="RecipientQueueService.finish_enqueue">Finished to enqueue recipients at %1$s. (Duration: %2$s)</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="RecipientQueueService.start_enqueue">Start des eintragens von Empfängern in die Warteliste um %1$s.</label>
+			<label index="RecipientQueueService.finish_enqueue">Fertigstellung der Warteliste Befüllung um %1$s. (Dauer: %2$s)</label>
+		</languageKey>
+	</data>
+</T3locallang>

@@ -6,6 +6,25 @@
 
 
 #
+# Table structure for table 'tx_directmail_domain_model_send_queue'
+#
+CREATE TABLE tx_directmail_domain_model_send_queue (
+	uid int(11) unsigned NOT NULL auto_increment,
+	pid int(11) unsigned DEFAULT '0' NOT NULL,
+	crdate int(11) unsigned DEFAULT '0' NOT NULL,
+	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
+	mail_job int(11) DEFAULT '0' NOT NULL,
+	recipient_uid int(11) DEFAULT '0' NOT NULL,
+	recipient_table varchar(64) DEFAULT '' NOT NULL,
+	recipient_data text DEFAULT '',
+	send_status tinyint(3) DEFAULT '0' NOT NULL,
+	UNIQUE KEY `unique_recipient (mail_job, recipient_uid, recipient_table, recipient_data),
+	KEY `mail_job_send_status` (mail_job, send_status),
+	PRIMARY KEY (uid)
+);
+
+
+#
 # Table structure for table 'cache_sys_dmail_stat'
 #
 CREATE TABLE cache_sys_dmail_stat (
