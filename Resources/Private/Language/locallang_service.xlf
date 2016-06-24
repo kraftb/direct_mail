@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2016-06-23T22:00:00Z">
+        <header>
+            <description>Labels for direct mail RecipientQueueService class</description>
+            <type>module</type>
+            <fileId>EXT:direct_mail/Resources/Private/Language/locallang_service.xlf</fileId>
+            <labelContext></labelContext>
+            <authorName>Bernhard Kraft</authorName>
+            <authorEmail>kraftb@think-open.at</authorEmail>
+            <generator>vim</generator>
+        </header>
+        <body>
+            <trans-unit id="RecipientQueueService.start_enqueue">
+                <source>Start to enqueue recipients at %1$s. Memory consumption: %2$s / %3$s.</source>
+            </trans-unit>
+            <trans-unit id="RecipientQueueService.finish_enqueue">
+                <source>Finished to enqueue %1$d recipients at %2$s. Duration: %3$s. Memory consumption: %4$s / %5$s.</source>
+            </trans-unit>
+		</body>
+	</file>
+</xliff>

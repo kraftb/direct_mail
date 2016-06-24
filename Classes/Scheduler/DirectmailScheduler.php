@@ -34,10 +34,22 @@ class DirectmailScheduler extends \TYPO3\CMS\Scheduler\Task\AbstractTask
      */
     public function execute()
     {
-        /* @var $htmlmail \DirectMailTeam\DirectMail\Dmailer */
-        $htmlmail = Utility\GeneralUtility::makeInstance('DirectMailTeam\\DirectMail\\Dmailer');
-        $htmlmail->start();
-        $htmlmail->runcron();
+        if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['useSendingQueue']) {
+            $objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+
+            // Get instance of massMailingService
+            $massMailingService = $objectManager->get('DirectMailTeam\DirectMail\Service\MassMailingService');
+
+            // Initialize and process mail jobs (sys_dmail)
+            $massMailingService->initialize();
+            $massMailingService->handleJobs();
+        } else {
+            /* @var $htmlmail \DirectMailTeam\DirectMail\Dmailer */
+            $htmlmail = GeneralUtility::makeInstance('DirectMailTeam\\DirectMail\\Dmailer');
+            $htmlmail->start();
+            $htmlmail->runcron();
+        }
         return true;
     }
 }
+

@@ -25,3 +25,9 @@ UseHttpToFetch = 0
 	# cat=basic/dev/1000; type=user[DirectMailTeam\DirectMail\Utility\TsParserExt->displayMessage]; label=LLL:EXT:direct_mail/Resources/Private/Language/locallang_mod2-6.xlf:update_option
 updateMessage=0
 
+	# cat=basic/enable; type=boolean; label=Enable sending queue: When this option is checked sending of mass mails will use to the new sendinq queue. This is a new feature and still beta.
+useSendingQueue = 0
+
+	# cat=basic/enable; type=boolean; label=Enqueue from task: Instead of enqueuing the recipients when the mail is scheduled for delivery (Step 5 of Direct Mail module) the recipients get enqueued by the first call to the scheduler task. This can become necessary when sending to a medium/large number of recipients (>1000) because otherwise a PHP process timeout could occur while enqueuing the recipients from within the backend module.
+enqueueByTask = 0
+

@@ -482,12 +482,27 @@ class MailerEngine extends \TYPO3\CMS\Backend\Module\BaseScriptClass
     public function invokeMEngine()
     {
         // TODO: remove htmlmail
-        /* @var $htmlmail \DirectMailTeam\DirectMail\Dmailer */
-        $htmlmail = GeneralUtility::makeInstance('DirectMailTeam\\DirectMail\\Dmailer');
-        $htmlmail->nonCron = 1;
-        $htmlmail->start();
-        $htmlmail->runcron();
-        return implode(LF, $htmlmail->logArray);
+        if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['direct_mail']['useSendingQueue']) {
+			$objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
+
+            // Get instance of massMailingService
+			$massMailingService = $objectManager->get('DirectMailTeam\DirectMail\Service\MassMailingService');
+
+            // Initialize and process mail jobs (sys_dmail)
+            $massMailingService->initialize();
+            $massMailingService->handleJobs();
+
+            // Return accumulated log messages
+            $logger = $objectManager->get('DirectMailTeam\DirectMail\Logger');
+            return implode(LF, $logger->getLogMessages());
+        } else {
+            /* @var $htmlmail \DirectMailTeam\DirectMail\Dmailer */
+            $htmlmail = GeneralUtility::makeInstance('DirectMailTeam\\DirectMail\\Dmailer');
+            $htmlmail->nonCron = 1;
+            $htmlmail->start();
+            $htmlmail->runcron();
+            return implode(LF, $htmlmail->logArray);
+        }
     }
 
     /**
